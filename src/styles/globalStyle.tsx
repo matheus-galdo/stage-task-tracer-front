@@ -25,14 +25,17 @@ const GlobalStyle = createGlobalStyle`
         color: #535bf2;
     }
 
-    //CSS-reset
     body {
-        margin: 0;
-        padding: 0;
         display: flex;
         min-width: 320px;
         min-height: 100vh;
+    }
+    
+    //CSS-reset
+    *{
         box-sizing: border-box;
+        padding: 0;
+        margin: 0;
     }
 
     #root{

@@ -4,6 +4,11 @@ import { ItemType } from "antd/es/menu/hooks/useItems";
 import { SyntheticEvent, useState } from "react";
 import { MenuContainer } from "./style";
 import { useNavigate } from "react-router-dom";
+import { Area } from "../../pages/Areas/ViewArea";
+
+type NavBarProps = {
+  areas: Area[];
+};
 
 type MenuAction = "newArea" | string;
 
@@ -14,17 +19,12 @@ type Action = {
 };
 
 
-export default function NavBar({ areas }) {
+export default function NavBar({ areas }: NavBarProps) {
   const navigate = useNavigate();
-
-  const menuAction = {
-    "newArea": () => navigate("/areas/criar"),
-  };
 
   const isCollapsed = false;
 
   const apiItems: ItemType[] = areas ? areas.map(area => ({ key: area.title, label: area.title })) : [];
-
 
   const addNewArea: ItemType = { key: "newArea", label: "Nova Area", icon: <PlusOutlined /> };
   const menuItens: ItemType[] = [
@@ -32,11 +32,13 @@ export default function NavBar({ areas }) {
   ];
 
   function handleNavBarClick(action: Action) {
+    console.log();
+    
     if (action.key === "newArea") {
-      const fn = menuAction[action.key];
-      fn(); 
+      navigate("/areas/criar")
+    }else{
+      navigate(`/areas/${action.key}`);
     }
-    navigate(`/areas/${action.key}`);
   }
 
   return <MenuContainer>
@@ -46,7 +48,6 @@ export default function NavBar({ areas }) {
       inlineCollapsed={isCollapsed}
       theme="dark"
       defaultOpenKeys={["1"]}
-      // onClick={(item) => showModal()}
       onClick={handleNavBarClick}
     />
   </MenuContainer>
