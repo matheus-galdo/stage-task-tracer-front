@@ -1,10 +1,11 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Menu, Modal } from "antd";
 import { ItemType } from "antd/es/menu/hooks/useItems";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useContext, useState } from "react";
 import { MenuContainer } from "./style";
 import { useNavigate } from "react-router-dom";
 import { Area } from "../../pages/Areas/ViewArea";
+import { NavbarContext } from "../../contexts/NavbarContext";
 
 type NavBarProps = {
   areas: Area[];
@@ -18,25 +19,24 @@ type Action = {
   domEvent: SyntheticEvent
 };
 
-
 export default function NavBar({ areas }: NavBarProps) {
   const navigate = useNavigate();
 
+  const {setSelectedItem} = useContext(NavbarContext);
   const isCollapsed = false;
 
-  const apiItems: ItemType[] = areas ? areas.map(area => ({ key: area.title, label: area.title })) : [];
+  const apiItems: ItemType[] = areas ? areas.map(area => ({ key: area.id, label: area.title })) : [];
 
   const addNewArea: ItemType = { key: "newArea", label: "Nova Area", icon: <PlusOutlined /> };
   const menuItens: ItemType[] = [
-    { key: "1", label: "Áreas", children: [...apiItems, addNewArea] },
+    { key: "areas", label: "Áreas", children: [...apiItems, addNewArea] },
   ];
 
   function handleNavBarClick(action: Action) {
-    console.log();
-    
     if (action.key === "newArea") {
-      navigate("/areas/criar")
+      navigate("/areas/criar");
     }else{
+      setSelectedItem(Number(action.key));
       navigate(`/areas/${action.key}`);
     }
   }
@@ -47,7 +47,7 @@ export default function NavBar({ areas }: NavBarProps) {
       mode="inline"
       inlineCollapsed={isCollapsed}
       theme="dark"
-      defaultOpenKeys={["1"]}
+      defaultOpenKeys={["areas"]}
       onClick={handleNavBarClick}
     />
   </MenuContainer>

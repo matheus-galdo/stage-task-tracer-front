@@ -31,6 +31,7 @@ export const ProcessItem = styled.article`
     padding: 0 2rem;
 
     transition: background ease-in-out .1s;
+    cursor: pointer;
 
     &:hover{
         background-color: #259171;

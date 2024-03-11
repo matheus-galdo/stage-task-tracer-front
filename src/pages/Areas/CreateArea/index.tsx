@@ -25,7 +25,7 @@ function CreateArea() {
   }
 
   return <CreateAreaContainer>
-    <NavBar areas={areas}/>
+    {areas && <NavBar areas={areas} />}
     <CreateAreaContent>
       <FormContainer>
         <Form

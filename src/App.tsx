@@ -2,6 +2,7 @@ import router from './routes.tsx';
 import { RouterProvider } from 'react-router-dom'
 import { ConfigProvider, theme } from 'antd';
 import GlobalStyle from './styles/globalStyle.tsx';
+import NavbarContextProvider from './contexts/NavbarContext.tsx';
 
 //TODO: separete file
 const antDThemeConfig = {
@@ -25,9 +26,11 @@ const antDThemeConfig = {
 function App() {
     return <>
         <GlobalStyle />
-        <ConfigProvider theme={antDThemeConfig}>
-            <RouterProvider router={router} />
-        </ConfigProvider >
+        <NavbarContextProvider>
+            <ConfigProvider theme={antDThemeConfig}>
+                <RouterProvider router={router} />
+            </ConfigProvider >
+        </NavbarContextProvider>
     </>;
 }
 

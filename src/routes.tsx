@@ -7,7 +7,7 @@ import Process from "./pages/Process/Index";
 const router = createBrowserRouter([
     {path: "/", element: <Home/>},
     {path: "/areas/criar", element: <CreateArea/>},
-    {path: "/areas/:title", element: <ViewArea/>},
+    {path: "/areas/:areaId", element: <ViewArea/>},
     {path: "/processo/:id", element: <Process/>},
 ]);
 
