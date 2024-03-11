@@ -13,7 +13,7 @@ type NavBarProps = {
 
 type MenuAction = "newArea" | string;
 
-type Action = {
+export type Action = {
   key: MenuAction;
   keyPath: string[];
   domEvent: SyntheticEvent

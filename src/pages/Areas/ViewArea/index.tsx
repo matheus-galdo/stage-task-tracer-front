@@ -1,12 +1,13 @@
 import axios, { AxiosError } from 'axios';
-import NavBar from '../../../components/NavBar/index.tsx'
+import NavBar, { Action } from '../../../components/NavBar/index.tsx'
 import './style.tsx'
 import { ContentContainer, PageContainer, ProcessContainer, ProcessItem, Title } from './style.tsx'
 
-import { Breadcrumb, Button, Form, Input, Modal, Row, Space } from 'antd';
+import { Breadcrumb, Button, Form, Input, Menu, Modal, Row, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { HomeFilled } from '@ant-design/icons';
+import { EllipsisOutlined, HomeFilled, PlusOutlined } from '@ant-design/icons';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
 
 export type Area = {
   title: string;
@@ -32,7 +33,7 @@ function ViewArea() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/processes/${areaId}`).then(response => {
+    axios.get(`http://localhost:3000/areas/${areaId}/processes`).then(response => {
       setArea(response.data);
       setProcesses(response.data.processes);
     });
@@ -59,11 +60,10 @@ function ViewArea() {
       </Row>
 
       <ProcessContainer>
-        {processes?.map(process => <ProcessItem
+        {processes?.map(process => <CardItem
           key={process.id}
-          onClick={() => navigate(`/processo/${process.id}`)}>
-          {process.name}
-        </ProcessItem>)}
+          process={process}
+        />)}
         {processes && processes.length === 0 && <p>Nenhum processo nesta área</p>}
       </ProcessContainer>
     </ContentContainer>
@@ -72,6 +72,44 @@ function ViewArea() {
   </PageContainer >
 }
 
+type CardItemProps = {
+  process: Process;
+}
+
+function CardItem({ process }: CardItemProps) {
+  // Menu
+  const navigate = useNavigate();
+
+  const cardMenuOptions: ItemType[] = [
+    {
+      key: "options", children: [
+        { key: "Editar", label: "Editar", onClick: fn },
+        { key: "Excluir", label: "Excluir", onClick: fn },
+      ],
+      // label: "oi",
+      onClick: (ev) => {
+        console.log(ev);
+      }
+    }
+  ];
+
+  function fn(ev: Action) {
+    console.log("clicado");
+
+    ev.domEvent.stopPropagation();
+  }
+
+  return <ProcessItem
+    onClick={(ev) => {
+      ev.stopPropagation();
+      navigate(`/processo/${process.id}`)
+    }}
+  >
+      
+      <p>{process.name}</p>
+      <Menu theme='dark' items={cardMenuOptions} expandIcon={<EllipsisOutlined />} />
+  </ProcessItem >;
+}
 
 type CreateProcessFormProps = {
   isModalOpen: boolean;

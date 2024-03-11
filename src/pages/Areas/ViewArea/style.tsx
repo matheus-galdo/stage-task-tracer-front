@@ -27,8 +27,9 @@ export const ProcessItem = styled.article`
     border-radius: 10px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
-    padding: 0 2rem;
+    padding-left: 2rem;
 
     transition: background ease-in-out .1s;
     cursor: pointer;

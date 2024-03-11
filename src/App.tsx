@@ -8,17 +8,18 @@ import NavbarContextProvider from './contexts/NavbarContext.tsx';
 const antDThemeConfig = {
     algorithm: theme.darkAlgorithm,
     token: {
-        // Seed Token
-        colorPrimary: '#28A781',
+        colorPrimary: '#28A781',        
         borderRadius: 2,
-
-        // Alias Token
-        // colorBgBase: '#499200',
     },
     components: {
         Menu: {
-            darkItemBg: "#202020",
-            itemHeight: 30
+            groupTitleColor: 'red',
+            darkItemBg: 'unset',
+            darkMenuItemBg: 'unset',
+            darkSubMenuItemBg: 'unset',
+            darkPopupBg: '#202020',
+            itemHeight: 30,
+            darkItemHoverBg: 'rgba(255, 255, 255, 0.06)'
         }
     }
 }
