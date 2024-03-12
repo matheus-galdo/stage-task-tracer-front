@@ -29,7 +29,9 @@ export function ProcessForm({ isModalOpen, setIsModalOpen, area, process }: Crea
 
     promise.then(() => {
       hideModal();
+      //TODO: reload nos processos
     }).catch((error: AxiosError) => {
+      //TODO: alerta de erro
       alert(error.response?.data);
     });
   }
@@ -42,7 +44,8 @@ export function ProcessForm({ isModalOpen, setIsModalOpen, area, process }: Crea
     processName: process ? process.name : '',
   }
 
-  return <Modal title="Criar Processo" open={isModalOpen} footer={false} onCancel={hideModal} destroyOnClose={true}>
+  const modalTitle = `${isEditingProcess ? "Editar" : "Criar"} Processo`;
+  return <Modal title={modalTitle} open={isModalOpen} footer={false} onCancel={hideModal} destroyOnClose={true}>
     <Form
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 20 }}

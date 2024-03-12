@@ -75,16 +75,7 @@ export default function CardItem({ process, area }: CardItemProps) {
             <Menu theme='dark' items={cardMenuOptions} expandIcon={<EllipsisOutlined />} />
         </ProcessItem >
 
-        <Modal
-            title="Editar Processo"
-            open={isEditModalOpen}
-            destroyOnClose={true}
-            onOk={() => console.log("aee")}
-            onCancel={() => hideModal('edit')}
-        >
-            <ProcessForm process={process} isModalOpen={isEditModalOpen} setIsModalOpen={setIsEditModalOpen} area={area} />
-        </Modal>
-
+        <ProcessForm process={process} isModalOpen={isEditModalOpen} setIsModalOpen={setIsEditModalOpen} area={area} />
         <Modal
             okButtonProps={{ danger: true, }}
             title="Confirmar ação"
