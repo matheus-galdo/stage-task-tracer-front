@@ -19,7 +19,8 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [clickedSubProcess, setClickedSubProcess] = useState<SubProcess>();
-
+  console.log(isEditModalOpen);
+  
   const onClose = () => {
     setOpen(false);
   };
