@@ -1,8 +1,8 @@
 import NavBar from '../../components/NavBar/index.tsx'
 import { Title } from '../Areas/ViewArea/style.tsx'
 import { PageContainer, PageContent } from './style.tsx'
-import { Breadcrumb } from 'antd';
-import { HomeFilled } from '@ant-design/icons';
+import { Breadcrumb, Button, Row } from 'antd';
+import { EditFilled, HomeFilled } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import processesService from '../../services/processesService.ts';
 import { useParams } from 'react-router-dom';
@@ -27,6 +27,7 @@ function ViewProcess() {
   const [process, setProcess] = useState<ProcessWithSubProcess>();
   const [selectedSubProcess, setSelectedSubProcess] = useState<number>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditingContent, setIsEditingContent] = useState(false);
 
   const { processId } = useParams();
 
@@ -50,6 +51,10 @@ function ViewProcess() {
     setIsModalOpen(true);
   }
 
+  function editContent() {
+    setIsEditingContent(true);
+  }
+
   function findSelectedSubProcess() {
     return process?.subProcesses.find(subProcess => subProcess.id == selectedSubProcess);
   }
@@ -60,16 +65,23 @@ function ViewProcess() {
     <NavBar />
     <PageContent>
       <Breadcrumb items={breadcrumItems} />
-      <Title>{process?.name}</Title>
 
       <div>
-        {content}
+        <Row>
+          <Title>{process?.name}</Title>
+          <Button onClick={editContent}>
+            <EditFilled />
+          </Button>
+        </Row>
+
+
+        {isEditingContent ? <textarea>Editar Conteúdo</textarea> : content}
       </div>
     </PageContent>
 
     {process && <SubProcessTimeLine
       subProcesses={process.subProcesses}
-      selectedSubProcess={selectedSubProcess}
+      selectedSubProcessId={selectedSubProcess}
       onSelectSubProcess={selectSubProcess}
       onNewSubProcessClick={openModal}
     />}

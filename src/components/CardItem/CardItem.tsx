@@ -1,4 +1,3 @@
-import axios from 'axios';
 import './style.tsx'
 import { ProcessItem } from './style.tsx'
 import { Menu, Modal } from 'antd';
@@ -9,6 +8,7 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Area, Process } from '../../pages/Areas/ViewArea/index.tsx';
 import { ProcessForm } from '../../pages/Areas/ViewArea/ProcessForm.tsx';
 import { Action } from '../NavBar/index.tsx';
+import processesService from '../../services/processesService.ts';
 
 type CardItemProps = {
     process: Process;
@@ -58,7 +58,7 @@ export default function CardItem({ process, area }: CardItemProps) {
     ];
 
     function deleteProcess() {
-        axios.delete(`http://localhost:3000/processes/${process.id}`).then(() => {
+        processesService.deleteProcess(process.id.toString()).then(() => {
             //TODO: avisar com sucesso
             hideModal('delete');
             //TODO: reload na pagina

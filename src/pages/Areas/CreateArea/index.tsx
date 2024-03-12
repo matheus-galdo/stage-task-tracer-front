@@ -1,9 +1,9 @@
-import axios from 'axios';
 import NavBar from '../../../components/NavBar/index.tsx'
 import './style.tsx'
 import { CreateAreaContainer, CreateAreaContent, FormContainer } from './style.tsx'
 
 import { Button, Form, Input, Space } from 'antd';
+import areasService from '../../../services/areasService.ts';
 
 type FieldsTypes = {
   title: string;
@@ -11,7 +11,7 @@ type FieldsTypes = {
 
 function CreateArea() {
   function handleSubmit(formData: FieldsTypes) {
-    axios.post('http://localhost:3000/areas', formData);
+    areasService.createArea(formData);
   }
 
   return <CreateAreaContainer>
@@ -43,7 +43,6 @@ function CreateArea() {
         </Form>
       </FormContainer>
     </CreateAreaContent>
-
   </CreateAreaContainer>
 }
 
