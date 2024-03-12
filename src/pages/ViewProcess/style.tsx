@@ -28,6 +28,38 @@ export const SubProcessItem = styled.aside<SubProcessItemProps>`
     cursor: pointer;
 
     &:hover{
-        background-color: ${({ selected }) => selected ?  '#33bb92' : 'rgba(255, 255, 255, 0.06)'};
+        background-color: ${({ selected }) => selected ? '#33bb92' : 'rgba(255, 255, 255, 0.06)'};
+    }
+`;
+
+export const TimelineContainer = styled.div`
+    width: 20px;
+    display: flex;
+    align-items: center;
+`;
+
+export const TimelinePipe = styled.div`
+    width: 2px;
+    background-color: #fff;
+    height: 100px;
+`;
+
+export type TimelineMarkerProps = {
+    selected: boolean;
+}
+export const TimelineMarker = styled.div<TimelineMarkerProps>`
+    width: 20px;
+    height: 20px;
+    border: 4px solid #2C2C2C;
+    margin-left: -11px;
+    border-radius: 10px;
+    background-color: #fff;
+
+    ${({ selected }) => selected && 'border-color: #28A781;'}
+
+    transition: border-color ease-in-out .1s;
+
+    &:hover{
+        border-color: ${({ selected }) => selected ? '#33bb92' : 'rgba(255, 255, 255, 0.06)'};
     }
 `;

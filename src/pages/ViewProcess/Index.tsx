@@ -1,8 +1,8 @@
 import NavBar from '../../components/NavBar/index.tsx'
 import { Title } from '../Areas/ViewArea/style.tsx'
 import './style.tsx'
-import { PageContainer, PageContent, SubProcessItem } from './style.tsx'
-import { Breadcrumb, Button, Drawer, Timeline } from 'antd';
+import { PageContainer, PageContent, SubProcessItem, SubProcessItemContainer, TimelineContainer, TimelineMarker, TimelinePipe } from './style.tsx'
+import { Breadcrumb, Button, Drawer } from 'antd';
 import { HomeFilled, MenuOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import processesService from '../../services/processesService.ts';
@@ -25,7 +25,6 @@ export type SubProcess = {
 function ViewProcess() {
   const [process, setProcess] = useState<ProcessWithSubProcess>();
   const [selectedSubProcess, setSelectedSubProcess] = useState<number>()
-
   const { processId } = useParams();
 
   useEffect(() => {
@@ -33,7 +32,6 @@ function ViewProcess() {
       processesService.getProcess(processId).then(response => setProcess(response.data));
     }
   }, [processId]);
-
 
   const breadcrumItems: Partial<BreadcrumbItemType & BreadcrumbSeparatorType>[] = [
     { title: <HomeFilled />, href: "/" },
@@ -45,11 +43,21 @@ function ViewProcess() {
     setSelectedSubProcess(item.id);
   }
 
+  function findSelectedSubProcess() {
+    return process?.subProcesses.find(subProcess => subProcess.id == selectedSubProcess);
+  }
+
+  const content = selectedSubProcess ? findSelectedSubProcess()?.description : process?.description;
+
   return <PageContainer>
     <NavBar />
     <PageContent>
       <Breadcrumb items={breadcrumItems} />
       <Title>{process?.name}</Title>
+
+      <div>
+        {content}
+      </div>
     </PageContent>
 
     {process && <SubProcessTimeLine
@@ -91,9 +99,14 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcess, onSelectSubProce
     closeIcon={<MenuOutlined />}
   >
     {subProcesses.map(subProcess => <SubProcessItem
+      key={subProcess.id}
       onClick={() => onSelectSubProcess(subProcess)}
       selected={isSelected(subProcess)}
     >
+      <TimelineContainer>
+        <TimelinePipe />
+        <TimelineMarker selected={isSelected(subProcess)}/>
+      </TimelineContainer>
       {subProcess.name}
     </SubProcessItem>)}
   </Drawer>
