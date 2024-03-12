@@ -10,7 +10,7 @@ import { Area, Process } from '../Areas/ViewArea/index.tsx';
 import { BreadcrumbItemType, BreadcrumbSeparatorType } from 'antd/es/breadcrumb/Breadcrumb';
 import SubProcessTimeLine from './subProcessTimeLineProps.tsx';
 import { SubProcessForm } from './SubProcessForm.tsx';
-import SubProcessModalContextProvider from '../../contexts/SubProcessModalContext.tsx';
+import SubProcessModalContextProvider from '../../contexts/SubProcessEditModalContext.tsx';
 
 export type ProcessWithSubProcess = Process & {
   subProcesses: SubProcess[];

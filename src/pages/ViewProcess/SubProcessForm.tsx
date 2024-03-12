@@ -3,7 +3,7 @@ import { Button, Form, Input, Modal, Row, Space } from "antd";
 import subProcessesService from "../../services/subProcessesService";
 import { Process } from "../Areas/ViewArea";
 import { useContext } from "react";
-import { SubProcessModalContext } from "../../contexts/SubProcessModalContext";
+import { SubProcessEditModalContext } from "../../contexts/SubProcessEditModalContext";
 
 type CreateSubProcessFormProps = {
   process: Process;
@@ -15,7 +15,7 @@ type FieldsTypes = {
 }
 
 export function SubProcessForm({ subProcess, process }: CreateSubProcessFormProps) {
-  const { isModalOpen, closeEditModal } = useContext(SubProcessModalContext);
+  const { isEditModalOpen, closeEditModal } = useContext(SubProcessEditModalContext);
   const isEditingSubProcess = !!subProcess;
 
   function handleSubmit(formData: FieldsTypes) {
@@ -42,7 +42,7 @@ export function SubProcessForm({ subProcess, process }: CreateSubProcessFormProp
   }
 
   const modalTitle = `${isEditingSubProcess ? "Editar" : "Criar"} Processo`;
-  return <Modal title={modalTitle} open={isModalOpen} footer={false} onCancel={closeEditModal} destroyOnClose={true}>
+  return <Modal title={modalTitle} open={isEditModalOpen} footer={false} onCancel={closeEditModal} destroyOnClose={true}>
     <Form
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 20 }}

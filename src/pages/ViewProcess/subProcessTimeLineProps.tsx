@@ -6,7 +6,8 @@ import { SubProcess } from './Index.tsx';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Action } from '../../components/NavBar/index.tsx';
 import subProcessesService from '../../services/subProcessesService.ts';
-import { SubProcessModalContext } from '../../contexts/SubProcessModalContext.tsx';
+import { SubProcessEditModalContext } from '../../contexts/SubProcessEditModalContext.tsx';
+import { SubProcessDeleteModalContext, SubProcessDeleteModalContextProvider } from '../../contexts/SubProcessDeleteModalContext.tsx';
 
 export type SubProcessTimeLineProps = {
   subProcesses: SubProcess[];
@@ -19,7 +20,7 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [clickedSubProcess, setClickedSubProcess] = useState<SubProcess>();
 
-  const { openEditModal, closeEditModal } = useContext(SubProcessModalContext);
+  const { openEditModal, closeEditModal } = useContext(SubProcessEditModalContext);
 
   const onClose = () => {
     setOpen(false);
@@ -28,25 +29,6 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
   const showDrawer = () => {
     setOpen(true);
   };
-
-  const showDeleteModal = () => {
-    setIsDeleteModalOpen(true);
-  };
-
-  function isSelected(item: SubProcess) {
-    return item.id === selectedSubProcessId;
-  }
-
-  function fn(action: Action, subProcess: SubProcess) {
-    setClickedSubProcess(subProcess);
-    action.domEvent.stopPropagation();
-    
-    if (action.key === 'edit') {
-      return openEditModal();
-    }
-
-    showDeleteModal();
-  }
 
   const hideModal = (type: 'edit' | 'delete') => {
     if (type === 'edit') {
@@ -63,19 +45,7 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
     });
   }
 
-  function getCardMenuOptions(subProcess: SubProcess): ItemType[] {
-    return [{
-      key: "options", children: [
-        { key: "edit", icon: <EditFilled />, label: "Editar", onClick: (action) => fn(action, subProcess) },
-        { key: "delete", icon: <DeleteFilled />, label: "Excluir", onClick: (action) => fn(action, subProcess), danger: true },
-      ],
-      onTitleClick: (ev) => {
-        ev.domEvent.stopPropagation();
-      }
-    }];
-  }
-
-  return <>
+  return <SubProcessDeleteModalContextProvider>
     <Drawer
       title={<Row justify='space-between'>
         Sub Processos
@@ -89,20 +59,12 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
       mask={false}
       closeIcon={<MenuOutlined />}
     >
-      {subProcesses.map(subProcess => <SubProcessItem
-        key={subProcess.id}
-        onClick={() => onSelectSubProcess(subProcess)}
-        selected={isSelected(subProcess)}
-      >
-        <TimelineContainer>
-          <TimelinePipe />
-          <TimelineMarker selected={isSelected(subProcess)} />
-        </TimelineContainer>
-        <Row justify='space-between' align='middle'>
-          <div>{subProcess.name}</div>
-          <Menu theme='dark' items={getCardMenuOptions(subProcess)} expandIcon={<EllipsisOutlined />} />
-        </Row>
-      </SubProcessItem>)}
+      {subProcesses.map(subProcess => <SubProcessCard
+        subProcess={subProcess}
+        onSelectSubProcess={onSelectSubProcess}
+        setClickedSubProcess={setClickedSubProcess}
+        selectedSubProcessId={selectedSubProcessId}
+      />)}
     </Drawer>
 
     {clickedSubProcess && <Modal
@@ -120,7 +82,58 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
         <MenuOutlined />
       </Button>
     </div>
-  </>;
+  </SubProcessDeleteModalContextProvider>;
+}
+
+
+
+
+function SubProcessCard({ subProcess, onSelectSubProcess, setClickedSubProcess, selectedSubProcessId }) {
+  function isSelected(item: SubProcess) {
+    return item.id === selectedSubProcessId;
+  }
+
+  const { openEditModal } = useContext(SubProcessEditModalContext);
+  const { showDeleteModal } = useContext(SubProcessDeleteModalContext);
+
+
+  function getCardMenuOptions(subProcess: SubProcess): ItemType[] {
+    return [{
+      key: "options", children: [
+        { key: "edit", icon: <EditFilled />, label: "Editar", onClick: (action) => fn(action, subProcess) },
+        { key: "delete", icon: <DeleteFilled />, label: "Excluir", onClick: (action) => fn(action, subProcess), danger: true },
+      ],
+      onTitleClick: (ev) => {
+        ev.domEvent.stopPropagation();
+      }
+    }];
+  }
+
+  function fn(action: Action, subProcess: SubProcess) {
+    setClickedSubProcess(subProcess);
+    action.domEvent.stopPropagation();
+
+    if (action.key === 'edit') {
+      return openEditModal();
+    }
+
+    showDeleteModal();
+  }
+
+  return <SubProcessItem
+    key={subProcess.id}
+    onClick={() => onSelectSubProcess(subProcess)}
+    selected={isSelected(subProcess)}
+  >
+    <TimelineContainer>
+      <TimelinePipe />
+      <TimelineMarker selected={isSelected(subProcess)} />
+    </TimelineContainer>
+    <Row justify='space-between' align='middle'>
+      <div>{subProcess.name}</div>
+      <Menu theme='dark' items={getCardMenuOptions(subProcess)} expandIcon={<EllipsisOutlined />} />
+    </Row>
+  </SubProcessItem>
 }
 
 export default SubProcessTimeLine;
