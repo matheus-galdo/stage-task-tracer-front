@@ -1,14 +1,15 @@
 import NavBar from '../../components/NavBar/index.tsx'
 import { Title } from '../Areas/ViewArea/style.tsx'
-import './style.tsx'
-import { PageContainer, PageContent, SubProcessItem, SubProcessItemContainer, TimelineContainer, TimelineMarker, TimelinePipe } from './style.tsx'
-import { Breadcrumb, Button, Drawer } from 'antd';
-import { HomeFilled, MenuOutlined } from '@ant-design/icons';
+import { PageContainer, PageContent } from './style.tsx'
+import { Breadcrumb } from 'antd';
+import { HomeFilled } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import processesService from '../../services/processesService.ts';
 import { useParams } from 'react-router-dom';
 import { Area, Process } from '../Areas/ViewArea/index.tsx';
 import { BreadcrumbItemType, BreadcrumbSeparatorType } from 'antd/es/breadcrumb/Breadcrumb';
+import SubProcessTimeLine from './subProcessTimeLineProps.tsx';
+import { SubProcessForm } from './SubProcessForm.tsx';
 
 export type ProcessWithSubProcess = Process & {
   subProcesses: SubProcess[];
@@ -24,7 +25,9 @@ export type SubProcess = {
 
 function ViewProcess() {
   const [process, setProcess] = useState<ProcessWithSubProcess>();
-  const [selectedSubProcess, setSelectedSubProcess] = useState<number>()
+  const [selectedSubProcess, setSelectedSubProcess] = useState<number>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { processId } = useParams();
 
   useEffect(() => {
@@ -41,6 +44,10 @@ function ViewProcess() {
 
   function selectSubProcess(item: SubProcess) {
     setSelectedSubProcess(item.id);
+  }
+
+  function openModal() {
+    setIsModalOpen(true);
   }
 
   function findSelectedSubProcess() {
@@ -64,58 +71,12 @@ function ViewProcess() {
       subProcesses={process.subProcesses}
       selectedSubProcess={selectedSubProcess}
       onSelectSubProcess={selectSubProcess}
+      onNewSubProcessClick={openModal}
     />}
+
+    {process && <SubProcessForm process={process} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
 
   </PageContainer>
 }
 
-export type SubProcessTimeLineProps = {
-  subProcesses: SubProcess[];
-  selectedSubProcess: number | undefined;
-  onSelectSubProcess: (item: SubProcess) => void;
-};
-
-function SubProcessTimeLine({ subProcesses, selectedSubProcess, onSelectSubProcess }: SubProcessTimeLineProps) {
-  const [open, setOpen] = useState(true);
-
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
-  function isSelected(item: SubProcess) {
-    return item.id === selectedSubProcess;
-  }
-
-  return <><Drawer
-    title="Sub Processos"
-    onClose={onClose}
-    open={open}
-    forceRender={true}
-    mask={false}
-    closeIcon={<MenuOutlined />}
-  >
-    {subProcesses.map(subProcess => <SubProcessItem
-      key={subProcess.id}
-      onClick={() => onSelectSubProcess(subProcess)}
-      selected={isSelected(subProcess)}
-    >
-      <TimelineContainer>
-        <TimelinePipe />
-        <TimelineMarker selected={isSelected(subProcess)}/>
-      </TimelineContainer>
-      {subProcess.name}
-    </SubProcessItem>)}
-  </Drawer>
-
-    <div>
-      <Button onClick={showDrawer}>
-        <MenuOutlined />
-      </Button>
-    </div>
-  </>;
-}
 export default ViewProcess;

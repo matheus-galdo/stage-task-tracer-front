@@ -1,3 +1,4 @@
+import { PlusCircleFilled } from "@ant-design/icons";
 import { styled } from "styled-components";
 
 export const PageContainer = styled.div`
@@ -62,4 +63,8 @@ export const TimelineMarker = styled.div<TimelineMarkerProps>`
     &:hover{
         border-color: ${({ selected }) => selected ? '#33bb92' : 'rgba(255, 255, 255, 0.06)'};
     }
+`;
+
+export const CustomPlusCircle = styled(PlusCircleFilled)`
+    font-size: 1.4rem;
 `;
