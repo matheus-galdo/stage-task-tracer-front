@@ -4,28 +4,18 @@ import './style.tsx'
 import { CreateAreaContainer, CreateAreaContent, FormContainer } from './style.tsx'
 
 import { Button, Form, Input, Space } from 'antd';
-import { useEffect, useState } from 'react';
 
 type FieldsTypes = {
   title: string;
 };
 
 function CreateArea() {
-  const [areas, setAreas] = useState();
-
-  useEffect(() => {
-    axios.get('http://localhost:3000/areas').then(response => {
-      setAreas(response.data)
-    });
-  }, []);
-
   function handleSubmit(formData: FieldsTypes) {
-    console.log(formData.title);
     axios.post('http://localhost:3000/areas', formData);
   }
 
   return <CreateAreaContainer>
-    {areas && <NavBar areas={areas} />}
+    <NavBar defaultActiveOption="newArea" />
     <CreateAreaContent>
       <FormContainer>
         <Form

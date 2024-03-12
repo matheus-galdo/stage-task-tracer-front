@@ -4,11 +4,10 @@ import { ItemType } from "antd/es/menu/hooks/useItems";
 import { SyntheticEvent, useContext } from "react";
 import { MenuContainer } from "./style";
 import { useNavigate } from "react-router-dom";
-import { Area } from "../../pages/Areas/ViewArea";
 import { NavbarContext } from "../../contexts/NavbarContext";
 
 type NavBarProps = {
-  areas: Area[];
+  defaultActiveOption?: string;
 };
 
 type MenuAction = "newArea" | string;
@@ -19,30 +18,30 @@ export type Action = {
   domEvent: SyntheticEvent
 };
 
-export default function NavBar({ areas }: NavBarProps) {
+export default function NavBar({ defaultActiveOption }: NavBarProps) {
   const navigate = useNavigate();
-
-  const {setSelectedItem} = useContext(NavbarContext);
+  const { areas } = useContext(NavbarContext);
+  
+  const defaultSelectedKeys = defaultActiveOption ? [defaultActiveOption] : [];
   const isCollapsed = false;
 
-  const apiItems: ItemType[] = areas ? areas.map(area => ({ key: area.id, label: area.title })) : [];
-
+  const areasItems: ItemType[] = areas ? areas.map(area => ({ key: area.id, label: area.title })) : [];
   const addNewArea: ItemType = { key: "newArea", label: "Nova Area", icon: <PlusOutlined /> };
   const menuItens: ItemType[] = [
-    { key: "areas", label: "Áreas", children: [...apiItems, addNewArea] },
+    { key: "areas", label: "Áreas", children: [...areasItems, addNewArea] },
   ];
 
   function handleNavBarClick(action: Action) {
     if (action.key === "newArea") {
       navigate("/areas/criar");
-    }else{
-      setSelectedItem(Number(action.key));
+    } else {
       navigate(`/areas/${action.key}`);
     }
   }
 
   return <MenuContainer>
     <Menu
+      defaultSelectedKeys={defaultSelectedKeys}
       items={menuItens}
       mode="inline"
       inlineCollapsed={isCollapsed}

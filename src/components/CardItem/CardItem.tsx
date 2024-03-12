@@ -52,14 +52,13 @@ export default function CardItem({ process, area }: CardItemProps) {
                 { key: "delete", icon: <DeleteFilled />, label: "Excluir", onClick: fn, danger: true },
             ],
             onTitleClick: (ev) => {
-                console.log(ev);
                 ev.domEvent.stopPropagation();
             }
         }
     ];
 
     function deleteProcess() {
-        axios.delete(`http://localhost:3000/processes/${process.id}`).then(response => {
+        axios.delete(`http://localhost:3000/processes/${process.id}`).then(() => {
             //TODO: avisar com sucesso
             hideModal('delete');
             //TODO: reload na pagina

@@ -21,7 +21,6 @@ export type Process = {
 
 function ViewArea() {
   const [processes, setProcesses] = useState<Process[]>();
-  const [areas, setAreas] = useState<Area[]>();
   const [area, setArea] = useState<Area>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { areaId } = useParams();
@@ -35,19 +34,13 @@ function ViewArea() {
     }
   }, [areaId]);
 
-  useEffect(() => {
-    areasService.getAreas().then(response => {
-      setAreas(response.data)
-    });
-  }, []);
-
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   return <PageContainer>
-    {areas && area && <>
-      <NavBar areas={areas} />
+    <NavBar defaultActiveOption={areaId}/>
+    {area && <>
       <ContentContainer>
         <Breadcrumb items={[{ title: <HomeFilled />, href: "/" }, { title: area?.title, href: `/${areaId}` }]} />
 
