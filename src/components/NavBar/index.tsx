@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Menu, Modal } from "antd";
+import { Menu } from "antd";
 import { ItemType } from "antd/es/menu/hooks/useItems";
-import { SyntheticEvent, useContext, useState } from "react";
+import { SyntheticEvent, useContext } from "react";
 import { MenuContainer } from "./style";
 import { useNavigate } from "react-router-dom";
 import { Area } from "../../pages/Areas/ViewArea";
@@ -15,7 +15,7 @@ type MenuAction = "newArea" | string;
 
 export type Action = {
   key: MenuAction;
-  keyPath: string[];
+  keyPath?: string[];
   domEvent: SyntheticEvent
 };
 
