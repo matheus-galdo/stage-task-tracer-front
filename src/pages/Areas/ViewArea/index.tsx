@@ -17,6 +17,7 @@ export type Process = {
   name: string;
   id: number;
   areaId: number;
+  description?: string;
 };
 
 function ViewArea() {
@@ -39,7 +40,7 @@ function ViewArea() {
   };
 
   return <PageContainer>
-    <NavBar defaultActiveOption={areaId}/>
+    <NavBar defaultActiveOption={areaId} />
     {area && <>
       <ContentContainer>
         <Breadcrumb items={[{ title: <HomeFilled />, href: "/" }, { title: area?.title, href: `/${areaId}` }]} />

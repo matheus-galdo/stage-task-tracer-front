@@ -5,11 +5,15 @@ function getProcesses() {
     return api.get(`/areas/processes`);
 }
 
-function createProcess(payload: Omit<Process,'id'>) {
+function getProcess(id: string) {
+    return api.get(`/processes/${id}`);
+}
+
+function createProcess(payload: Omit<Process, 'id'>) {
     return api.post(`/processes`, payload);
 }
 
-function updateProcess(id: string, payload: Omit<Process,'id'>) {
+function updateProcess(id: string, payload: Omit<Process, 'id'>) {
     return api.put(`/processes/${id}`, payload);
 }
 
@@ -19,6 +23,7 @@ function deleteProcess(id: string) {
 
 const processesService = {
     getProcesses,
+    getProcess,
     createProcess,
     updateProcess,
     deleteProcess,
