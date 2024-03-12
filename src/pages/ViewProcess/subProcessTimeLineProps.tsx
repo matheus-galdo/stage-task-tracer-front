@@ -1,36 +1,32 @@
 import { CustomPlusCircle, SubProcessItem, TimelineContainer, TimelineMarker, TimelinePipe } from './style.tsx'
 import { Button, Drawer, Menu, Modal, Row } from 'antd';
 import { DeleteFilled, EditFilled, EllipsisOutlined, MenuOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { SubProcess } from './Index.tsx';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Action } from '../../components/NavBar/index.tsx';
 import subProcessesService from '../../services/subProcessesService.ts';
+import { SubProcessModalContext } from '../../contexts/SubProcessModalContext.tsx';
 
 export type SubProcessTimeLineProps = {
   subProcesses: SubProcess[];
   selectedSubProcessId: number | undefined;
   onSelectSubProcess: (item: SubProcess) => void;
-  onNewSubProcessClick: () => void;
 };
 
-function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubProcess, onNewSubProcessClick }: SubProcessTimeLineProps) {
+function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubProcess }: SubProcessTimeLineProps) {
   const [open, setOpen] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [clickedSubProcess, setClickedSubProcess] = useState<SubProcess>();
-  console.log(isEditModalOpen);
-  
+
+  const { openEditModal, closeEditModal } = useContext(SubProcessModalContext);
+
   const onClose = () => {
     setOpen(false);
   };
 
   const showDrawer = () => {
     setOpen(true);
-  };
-
-  const showEditModal = () => {
-    setIsEditModalOpen(true);
   };
 
   const showDeleteModal = () => {
@@ -43,11 +39,10 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
 
   function fn(action: Action, subProcess: SubProcess) {
     setClickedSubProcess(subProcess);
-
     action.domEvent.stopPropagation();
-
+    
     if (action.key === 'edit') {
-      return showEditModal();
+      return openEditModal();
     }
 
     showDeleteModal();
@@ -55,7 +50,7 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
 
   const hideModal = (type: 'edit' | 'delete') => {
     if (type === 'edit') {
-      return setIsEditModalOpen(false);
+      return closeEditModal();
     }
     setIsDeleteModalOpen(false);
   };
@@ -84,7 +79,7 @@ function SubProcessTimeLine({ subProcesses, selectedSubProcessId, onSelectSubPro
     <Drawer
       title={<Row justify='space-between'>
         Sub Processos
-        <Button type='text' size='small' onClick={onNewSubProcessClick}>
+        <Button type='text' size='small' onClick={openEditModal}>
           <CustomPlusCircle />
         </Button>
       </Row>}

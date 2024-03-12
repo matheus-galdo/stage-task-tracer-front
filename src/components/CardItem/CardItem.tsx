@@ -13,9 +13,10 @@ import processesService from '../../services/processesService.ts';
 type CardItemProps = {
     process: Process;
     area: Area;
+    getProcesses: (areaId: string) => void;
 }
 
-export default function CardItem({ process, area }: CardItemProps) {
+export default function CardItem({ process, area, getProcesses }: CardItemProps) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const navigate = useNavigate();
@@ -59,9 +60,8 @@ export default function CardItem({ process, area }: CardItemProps) {
 
     function deleteProcess() {
         processesService.deleteProcess(process.id.toString()).then(() => {
-            //TODO: avisar com sucesso
+            getProcesses(area.id.toString());
             hideModal('delete');
-            //TODO: reload na pagina
         });
     }
 
@@ -74,7 +74,14 @@ export default function CardItem({ process, area }: CardItemProps) {
             <Menu theme='dark' items={cardMenuOptions} expandIcon={<EllipsisOutlined />} />
         </ProcessItem >
 
-        <ProcessForm process={process} isModalOpen={isEditModalOpen} setIsModalOpen={setIsEditModalOpen} area={area} />
+        <ProcessForm
+            process={process}
+            getProcesses={getProcesses}
+            isModalOpen={isEditModalOpen}
+            setIsModalOpen={setIsEditModalOpen}
+            area={area}
+        />
+        
         <Modal
             okButtonProps={{ danger: true, }}
             title="Confirmar ação"

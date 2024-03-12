@@ -6,6 +6,7 @@ import { Button, Form, Input, Modal, Row, Space } from "antd";
 type CreateProcessFormProps = {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
+  getProcesses: (areaId: string) => void;
   area: Area;
   process?: Process | undefined;
 }
@@ -14,7 +15,7 @@ type FieldsTypes = {
   processName: string;
 }
 
-export function ProcessForm({ isModalOpen, setIsModalOpen, area, process }: CreateProcessFormProps) {
+export function ProcessForm({ isModalOpen, getProcesses, setIsModalOpen, area, process }: CreateProcessFormProps) {
   const isEditingProcess = !!process;
 
   function handleSubmit(formData: FieldsTypes) {
@@ -29,9 +30,8 @@ export function ProcessForm({ isModalOpen, setIsModalOpen, area, process }: Crea
 
     promise.then(() => {
       hideModal();
-      //TODO: reload nos processos
+      getProcesses(area.id.toString());
     }).catch((error: AxiosError) => {
-      //TODO: alerta de erro
       alert(error.response?.data);
     });
   }

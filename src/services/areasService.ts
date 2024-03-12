@@ -2,7 +2,7 @@ import { Area } from "../pages/Areas/ViewArea";
 import { api } from "./axiosService";
 
 function createArea(payload: Omit<Area, 'id'>) {
-    return api.post('/areas', payload);
+    return api.post<Area>('/areas', payload);
 }
 
 function getAreas() {

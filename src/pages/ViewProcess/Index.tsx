@@ -10,6 +10,7 @@ import { Area, Process } from '../Areas/ViewArea/index.tsx';
 import { BreadcrumbItemType, BreadcrumbSeparatorType } from 'antd/es/breadcrumb/Breadcrumb';
 import SubProcessTimeLine from './subProcessTimeLineProps.tsx';
 import { SubProcessForm } from './SubProcessForm.tsx';
+import SubProcessModalContextProvider from '../../contexts/SubProcessModalContext.tsx';
 
 export type ProcessWithSubProcess = Process & {
   subProcesses: SubProcess[];
@@ -26,7 +27,6 @@ export type SubProcess = {
 function ViewProcess() {
   const [process, setProcess] = useState<ProcessWithSubProcess>();
   const [selectedSubProcess, setSelectedSubProcess] = useState<number>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditingContent, setIsEditingContent] = useState(false);
 
   const { processId } = useParams();
@@ -47,10 +47,6 @@ function ViewProcess() {
     setSelectedSubProcess(item.id);
   }
 
-  function openModal() {
-    setIsModalOpen(true);
-  }
-
   function editContent() {
     setIsEditingContent(true);
   }
@@ -62,32 +58,31 @@ function ViewProcess() {
   const content = selectedSubProcess ? findSelectedSubProcess()?.description : process?.description;
 
   return <PageContainer>
-    <NavBar />
-    <PageContent>
-      <Breadcrumb items={breadcrumItems} />
+    <SubProcessModalContextProvider>
+      <NavBar />
+      <PageContent>
+        <Breadcrumb items={breadcrumItems} />
 
-      <div>
-        <Row>
-          <Title>{process?.name}</Title>
-          <Button onClick={editContent}>
-            <EditFilled />
-          </Button>
-        </Row>
+        <div>
+          <Row>
+            <Title>{process?.name}</Title>
+            <Button onClick={editContent}>
+              <EditFilled />
+            </Button>
+          </Row>
 
+          {isEditingContent ? <textarea>Editar Conteúdo</textarea> : content}
+        </div>
+      </PageContent>
 
-        {isEditingContent ? <textarea>Editar Conteúdo</textarea> : content}
-      </div>
-    </PageContent>
+      {process && <SubProcessTimeLine
+        subProcesses={process.subProcesses}
+        selectedSubProcessId={selectedSubProcess}
+        onSelectSubProcess={selectSubProcess}
+      />}
 
-    {process && <SubProcessTimeLine
-      subProcesses={process.subProcesses}
-      selectedSubProcessId={selectedSubProcess}
-      onSelectSubProcess={selectSubProcess}
-      onNewSubProcessClick={openModal}
-    />}
-
-    {process && <SubProcessForm process={process} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
-
+      {process && <SubProcessForm process={process} />}
+    </SubProcessModalContextProvider>
   </PageContainer>
 }
 

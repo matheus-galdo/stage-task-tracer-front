@@ -1,7 +1,7 @@
+import { HomeFilled, PlusOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { Breadcrumb, Button, Row, Space } from 'antd';
 import { useParams } from 'react-router-dom';
-import { HomeFilled, PlusOutlined } from '@ant-design/icons';
 import NavBar from '../../../components/NavBar/index.tsx'
 import CardItem from '../../../components/CardItem/CardItem.tsx';
 import areasService from '../../../services/areasService.ts';
@@ -28,12 +28,16 @@ function ViewArea() {
 
   useEffect(() => {
     if (areaId) {
-      areasService.getAreaProcesses(areaId).then(response => {
-        setArea(response.data);
-        setProcesses(response.data.processes);
-      });
+      getProcesses(areaId);
     }
   }, [areaId]);
+
+  function getProcesses(areaId: string) {
+    areasService.getAreaProcesses(areaId).then(response => {
+      setArea(response.data);
+      setProcesses(response.data.processes);
+    });
+  }
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -60,12 +64,13 @@ function ViewArea() {
             key={process.id}
             process={process}
             area={area}
+            getProcesses={getProcesses}
           />)}
           {processes && processes.length === 0 && <p>Nenhum processo nesta área</p>}
         </ProcessContainer>
       </ContentContainer>
 
-      <ProcessForm area={area} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+      <ProcessForm area={area} getProcesses={getProcesses} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </>}
   </PageContainer >
 }
