@@ -36,11 +36,11 @@ function ViewArea() {
 
   useEffect(() => {
     if (areaId) {
-      getProcesses(areaId);
+      getProcesses(Number(areaId));
     }
   }, [areaId]);
 
-  function getProcesses(areaId: string) {
+  function getProcesses(areaId: number) {
     areasService.getAreaProcesses(areaId).then(response => {
       setArea(response.data);
       setProcesses(response.data.processes);

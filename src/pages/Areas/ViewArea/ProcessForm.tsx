@@ -6,7 +6,7 @@ import { Button, Form, Input, Modal, Row, Space } from "antd";
 type CreateProcessFormProps = {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
-  getProcesses: (areaId: string) => void;
+  getProcesses: (areaId: number) => void;
   area: Area;
   process?: Process | undefined;
 }
@@ -33,7 +33,7 @@ export function ProcessForm({ isModalOpen, getProcesses, setIsModalOpen, area, p
 
     promise.then(() => {
       hideModal();
-      getProcesses(area.id.toString());
+      getProcesses(area.id);
     }).catch((error: AxiosError) => {
       alert(error.response?.data);
     });

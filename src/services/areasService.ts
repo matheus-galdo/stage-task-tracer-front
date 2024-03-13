@@ -9,11 +9,11 @@ function getAreas() {
     return api.get('/areas');
 }
 
-function updateArea(areaId: string, payload: Omit<Area, 'id'>) {
+function updateArea(areaId: number, payload: Omit<Area, 'id'>) {
     return api.put(`/areas/${areaId}`, payload);
 }
 
-function getAreaProcesses(areaId: string) {
+function getAreaProcesses(areaId: number) {
     return api.get(`/areas/${areaId}/processes`);
 }
 

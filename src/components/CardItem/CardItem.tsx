@@ -11,7 +11,7 @@ import CardOptionsMenu from '../CardOptionsMenu/Index.tsx';
 type CardItemProps = {
     process: Process;
     area: Area;
-    getProcesses: (areaId: string) => void;
+    getProcesses: (areaId: number) => void;
 }
 
 export default function CardItem({ process, area, getProcesses }: CardItemProps) {
@@ -38,7 +38,7 @@ export default function CardItem({ process, area, getProcesses }: CardItemProps)
 
     function deleteProcess() {
         processesService.deleteProcess(process.id).then(() => {
-            getProcesses(area.id.toString());
+            getProcesses(area.id);
             hideModal('delete');
         });
     }

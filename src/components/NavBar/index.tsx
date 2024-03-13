@@ -22,12 +22,19 @@ export type Action = {
   domEvent: SyntheticEvent
 };
 
+type NavbarItemProps = {
+  area: Area;
+  onDelete: (action: Action, value?: Area) => void;
+  onEdit: (action: Action, value?: Area) => void;
+}
 
-function NavbarItem({ area, onDelete, onEdit }) {
-  return <Row justify='space-between' align='middle'>
-    {area.title}
-    <CardOptionsMenu cardItem={area} onDeleteSelected={onDelete} onEditSelected={onEdit} />
-  </Row>
+function NavbarItem({ area, onDelete, onEdit }: NavbarItemProps) {
+  return <>
+    {area && <Row justify='space-between' align='middle'>
+      {area.title}
+      <CardOptionsMenu cardItem={area} onDeleteSelected={onDelete} onEditSelected={onEdit} />
+    </Row>}
+  </>
 }
 
 export default function NavBar({ defaultActiveOption }: NavBarProps) {
@@ -42,16 +49,11 @@ export default function NavBar({ defaultActiveOption }: NavBarProps) {
   const isCollapsed = false;
 
 
-  function deleteArea(action) {
+  function deleteArea() {
     if (selectedArea) {
-      areasService.deleteArea(selectedArea.id).then(()=> {
-        console.log('apagou');
+      areasService.deleteArea(selectedArea.id).then(() => {
       });
     }
-  }
-
-  function editArea(action) {
-    console.log("agui");
   }
 
   const hideModal = (type: 'edit' | 'delete') => {
@@ -61,13 +63,13 @@ export default function NavBar({ defaultActiveOption }: NavBarProps) {
     setIsDeleteModalOpen(false);
   };
 
-  function showDeleteModal(action: Action, value: Area) {
+  function showDeleteModal(action: Action, value?: Area) {
     action.domEvent.stopPropagation();
     setSelectedArea(value);
     setIsDeleteModalOpen(true);
   }
 
-  function showEditModal(action: Action, value: Area) {
+  function showEditModal(action: Action, value?: Area) {
     action.domEvent.stopPropagation();
     setSelectedArea(value);
     setIsEditModalOpen(true);
@@ -113,7 +115,7 @@ export default function NavBar({ defaultActiveOption }: NavBarProps) {
     </Modal>
 
     <EditAreaModalForm
-      area={selectedArea} isEditModalOpen={isEditModalOpen} editArea={editArea} hideModal={hideModal} />
+      area={selectedArea} isEditModalOpen={isEditModalOpen} hideModal={hideModal} />
   </MenuContainer>
 }
 
@@ -122,20 +124,27 @@ type FieldsTypes = {
   title: string;
 }
 
-function EditAreaModalForm({ area, isEditModalOpen, editArea, hideModal }) {
+type EditAreaModalFormProps = {
+  area?: Area;
+  isEditModalOpen: boolean;
+  hideModal: (type: 'edit' | 'delete') => void;
+}
+
+function EditAreaModalForm({ area, isEditModalOpen, hideModal }: EditAreaModalFormProps) {
   const initialValues: FieldsTypes = {
     title: area?.title || '',
   }
 
   function handleSubmit(formData: FieldsTypes) {
     const formRequestBody: Omit<Area, 'id'> = { title: formData.title };
-
-    areasService.updateArea(area.id, formRequestBody).then(() => {
-      hideModal('edit');
-      // onCreateOrUpdate(process?.id);
-    }).catch((error: AxiosError) => {
-      alert(error.response?.data);
-    });
+    if (area) {
+      areasService.updateArea(area.id, formRequestBody).then(() => {
+        hideModal('edit');
+        // onCreateOrUpdate(process?.id);
+      }).catch((error: AxiosError) => {
+        alert(error.response?.data);
+      });
+    }
   }
 
   return <Modal title="Editar área" open={isEditModalOpen} footer={false} onCancel={() => hideModal('edit')} destroyOnClose={true}>
