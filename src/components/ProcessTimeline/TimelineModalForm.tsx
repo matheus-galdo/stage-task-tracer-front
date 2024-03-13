@@ -1,48 +1,55 @@
-import { AxiosError, AxiosResponse } from "axios";
 import { Button, Form, Input, Modal, Row, Space } from "antd";
-import subProcessesService from "../../services/subProcessesService";
-import { Process } from "../Areas/ViewArea";
+import { AxiosError, AxiosResponse } from "axios";
 import { useContext } from "react";
+import { Process } from "../../pages/Areas/ViewArea";
+import subProcessesService from "../../services/subProcessesService";
+import { SubProcessTimelineContext } from "../../contexts/SubProcessTimelineContext";
 import { SubProcessEditModalContext } from "../../contexts/SubProcessEditModalContext";
 
-type CreateSubProcessFormProps = {
+type TimelineModalFormProps = {
   process: Process;
-  subProcess?: Process | undefined;
+  onCreateOrUpdate: (processId: number) => void;
 }
 
 type FieldsTypes = {
   subProcessName: string;
 }
 
-export function SubProcessForm({ subProcess, process }: CreateSubProcessFormProps) {
+function TimelineModalForm({ process, onCreateOrUpdate }: TimelineModalFormProps) {
   const { isEditModalOpen, closeEditModal } = useContext(SubProcessEditModalContext);
-  const isEditingSubProcess = !!subProcess;
+  const { selectedSubProcess, setSelectedSubProcess } = useContext(SubProcessTimelineContext);
+
+  const isEditingSubProcess = !!selectedSubProcess;
 
   function handleSubmit(formData: FieldsTypes) {
     const formRequestBody = { name: formData.subProcessName, processId: process?.id };
 
     let promise: Promise<AxiosResponse>;
     if (isEditingSubProcess) {
-      promise = subProcessesService.updateProcess(process.id.toString(), formRequestBody);
+      promise = subProcessesService.updateProcess(selectedSubProcess.id, formRequestBody);
     } else {
       promise = subProcessesService.createProcess(formRequestBody);
     }
 
     promise.then(() => {
       closeEditModal();
-      //TODO: reload nos processos
+      onCreateOrUpdate(process?.id);
     }).catch((error: AxiosError) => {
-      //TODO: alerta de erro
       alert(error.response?.data);
     });
   }
 
+  function cancelEditOrCreate() {
+    setSelectedSubProcess(undefined);
+    closeEditModal();
+  }
+
   const initialValues: FieldsTypes = {
-    subProcessName: subProcess ? subProcess.name : '',
+    subProcessName: selectedSubProcess ? selectedSubProcess.name : '',
   }
 
   const modalTitle = `${isEditingSubProcess ? "Editar" : "Criar"} Processo`;
-  return <Modal title={modalTitle} open={isEditModalOpen} footer={false} onCancel={closeEditModal} destroyOnClose={true}>
+  return <Modal title={modalTitle} open={isEditModalOpen} footer={false} onCancel={cancelEditOrCreate} destroyOnClose={true}>
     <Form
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 20 }}
@@ -59,7 +66,7 @@ export function SubProcessForm({ subProcess, process }: CreateSubProcessFormProp
 
       <Row justify="end" align="top">
         <Space size="small">
-          <Button type="default" onClick={closeEditModal}>
+          <Button type="default" onClick={cancelEditOrCreate}>
             Cancelar
           </Button>
           <Button type="primary" htmlType="submit">
@@ -70,3 +77,5 @@ export function SubProcessForm({ subProcess, process }: CreateSubProcessFormProp
     </Form>
   </Modal>
 }
+
+export default TimelineModalForm;

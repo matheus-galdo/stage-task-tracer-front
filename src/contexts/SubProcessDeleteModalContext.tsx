@@ -12,8 +12,7 @@ export const SubProcessDeleteModalContext = createContext<SubProcessDeleteModalC
     closeDeleteModal: () => { },
 });
 
-export function SubProcessDeleteModalContextProvider({ children }: PropsWithChildren) {
-
+function SubProcessDeleteModalContextProvider({ children }: PropsWithChildren) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const showDeleteModal = () => {
@@ -34,3 +33,5 @@ export function SubProcessDeleteModalContextProvider({ children }: PropsWithChil
         {children}
     </SubProcessDeleteModalContext.Provider>
 }
+
+export default SubProcessDeleteModalContextProvider;

@@ -1,16 +1,22 @@
-import NavBar from '../../components/NavBar/index.tsx'
-import { Title } from '../Areas/ViewArea/style.tsx'
-import { PageContainer, PageContent } from './style.tsx'
-import { Breadcrumb, Button, Row } from 'antd';
-import { EditFilled, HomeFilled } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import processesService from '../../services/processesService.ts';
-import { useParams } from 'react-router-dom';
-import { Area, Process } from '../Areas/ViewArea/index.tsx';
 import { BreadcrumbItemType, BreadcrumbSeparatorType } from 'antd/es/breadcrumb/Breadcrumb';
-import SubProcessTimeLine from './subProcessTimeLineProps.tsx';
-import { SubProcessForm } from './SubProcessForm.tsx';
-import SubProcessModalContextProvider from '../../contexts/SubProcessEditModalContext.tsx';
+import { Breadcrumb } from 'antd';
+import { HomeFilled } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
+import { PageContainer, PageContent } from './style.tsx'
+import NavBar from '../../components/NavBar/index.tsx'
+import processesService from '../../services/processesService.ts';
+import { Area, Process } from '../Areas/ViewArea/index.tsx';
+import SubProcessEditModalContextProvider from '../../contexts/SubProcessEditModalContext.tsx';
+import SubProcessTimelineContextProvider from '../../contexts/SubProcessTimelineContext.tsx';
+import SubProcessDeleteModalContextProvider from '../../contexts/SubProcessDeleteModalContext.tsx';
+import ProcessTimeLine from '../../components/ProcessTimeline/ProcessTimeLine.tsx';
+import ProcessContent from './ProcessContent.tsx';
+import TimelineModalForm from '../../components/ProcessTimeline/TimelineModalForm.tsx';
+import TimelineModalDelete from '../../components/ProcessTimeline/TimelineModalDelete.tsx';
+
+
 
 export type ProcessWithSubProcess = Process & {
   subProcesses: SubProcess[];
@@ -26,16 +32,17 @@ export type SubProcess = {
 
 function ViewProcess() {
   const [process, setProcess] = useState<ProcessWithSubProcess>();
-  const [selectedSubProcess, setSelectedSubProcess] = useState<number>();
-  const [isEditingContent, setIsEditingContent] = useState(false);
-
   const { processId } = useParams();
 
   useEffect(() => {
     if (processId) {
-      processesService.getProcess(processId).then(response => setProcess(response.data));
+      getProcess(Number(processId));
     }
   }, [processId]);
+
+  function getProcess(processId: number) {
+    processesService.getProcess(processId).then(response => setProcess(response.data));
+  }
 
   const breadcrumItems: Partial<BreadcrumbItemType & BreadcrumbSeparatorType>[] = [
     { title: <HomeFilled />, href: "/" },
@@ -43,47 +50,29 @@ function ViewProcess() {
     { title: process?.name, href: `/processo/${process?.id}` },
   ];
 
-  function selectSubProcess(item: SubProcess) {
-    setSelectedSubProcess(item.id);
-  }
-
-  function editContent() {
-    setIsEditingContent(true);
-  }
-
-  function findSelectedSubProcess() {
-    return process?.subProcesses.find(subProcess => subProcess.id == selectedSubProcess);
-  }
-
-  const content = selectedSubProcess ? findSelectedSubProcess()?.description : process?.description;
-
   return <PageContainer>
-    <SubProcessModalContextProvider>
-      <NavBar />
-      <PageContent>
-        <Breadcrumb items={breadcrumItems} />
+    <NavBar />
 
-        <div>
-          <Row>
-            <Title>{process?.name}</Title>
-            <Button onClick={editContent}>
-              <EditFilled />
-            </Button>
-          </Row>
+    <PageContent>
+      <SubProcessTimelineContextProvider>
+        <SubProcessEditModalContextProvider>
+          <SubProcessDeleteModalContextProvider>
+            <Breadcrumb items={breadcrumItems} />
 
-          {isEditingContent ? <textarea>Editar Conteúdo</textarea> : content}
-        </div>
-      </PageContent>
+            {process && <>
+              <ProcessContent process={process} />
+              <ProcessTimeLine subProcesses={process.subProcesses} />
+              <TimelineModalForm process={process} onCreateOrUpdate={getProcess} />
+              <TimelineModalDelete onDelete={getProcess} />
+            </>}
 
-      {process && <SubProcessTimeLine
-        subProcesses={process.subProcesses}
-        selectedSubProcessId={selectedSubProcess}
-        onSelectSubProcess={selectSubProcess}
-      />}
-
-      {process && <SubProcessForm process={process} />}
-    </SubProcessModalContextProvider>
+          </SubProcessDeleteModalContextProvider>
+        </SubProcessEditModalContextProvider>
+      </SubProcessTimelineContextProvider>
+    </PageContent >
   </PageContainer>
 }
+
+
 
 export default ViewProcess;

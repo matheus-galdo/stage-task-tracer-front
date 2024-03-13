@@ -5,11 +5,11 @@ function createProcess(payload: Omit<SubProcess, 'id'>) {
     return api.post(`/sub-processes`, payload);
 }
 
-function updateProcess(id: string, payload: Omit<SubProcess, 'id'>) {
+function updateProcess(id: number, payload: Omit<SubProcess, 'id'>) {
     return api.put(`/sub-processes/${id}`, payload);
 }
 
-function deleteProcess(id: string) {
+function deleteProcess(id: number) {
     return api.delete(`/sub-processes/${id}`);
 }
 

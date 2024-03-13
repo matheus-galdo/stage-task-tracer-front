@@ -5,7 +5,7 @@ function getProcesses() {
     return api.get(`/areas/processes`);
 }
 
-function getProcess(id: string) {
+function getProcess(id: number) {
     return api.get(`/processes/${id}`);
 }
 
