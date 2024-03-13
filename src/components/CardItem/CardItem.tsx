@@ -37,7 +37,7 @@ export default function CardItem({ process, area, getProcesses }: CardItemProps)
     }
 
     function deleteProcess() {
-        processesService.deleteProcess(process.id.toString()).then(() => {
+        processesService.deleteProcess(process.id).then(() => {
             getProcesses(area.id.toString());
             hideModal('delete');
         });
