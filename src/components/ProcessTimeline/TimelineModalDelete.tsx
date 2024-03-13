@@ -2,8 +2,8 @@ import { Modal } from 'antd';
 import { useContext } from 'react';
 import { SubProcessTimelineContext } from '../../contexts/SubProcessTimelineContext.tsx';
 import { SubProcessDeleteModalContext } from '../../contexts/SubProcessDeleteModalContext.tsx';
-import subProcessesService from '../../services/subProcessesService.ts';
-import { SubProcess } from '../../pages/ViewProcess/Index.tsx';
+import { ProcessWithSubProcess } from '../../pages/Areas/ViewArea/index.tsx';
+import processesService from '../../services/processesService.ts';
 
 type SubProcessDeleteModalProps = {
   onDelete: (processId: number) => void;
@@ -13,10 +13,12 @@ function TimelineModalDelete({ onDelete }: SubProcessDeleteModalProps) {
   const { selectedSubProcess, setSelectedSubProcess } = useContext(SubProcessTimelineContext);
   const { isDeleteModalOpen, closeDeleteModal } = useContext(SubProcessDeleteModalContext);
 
-  function deleteSubProcess(subProcess: SubProcess) {
-    subProcessesService.deleteProcess(subProcess.id).then(() => {
+  function deleteSubProcess(subProcess: ProcessWithSubProcess) {
+    processesService.deleteProcess(subProcess.id).then(() => {
       closeDeleteModal();
-      onDelete(subProcess.processId);
+      if (subProcess.parentId) {
+        onDelete(subProcess.parentId);
+      }
       setSelectedSubProcess(undefined);
     });
   }

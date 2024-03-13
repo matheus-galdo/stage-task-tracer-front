@@ -14,11 +14,19 @@ export type Area = {
 };
 
 export type Process = {
-  name: string;
   id: number;
+  name: string;
   areaId: number;
   description?: string;
+  parentId?: number;
+  childProcessOrder: number;
+  isProcessRoot: boolean;
 };
+
+export type ProcessWithSubProcess = Process & {
+  children: ProcessWithSubProcess[];
+  area: Area;
+}
 
 function ViewArea() {
   const [processes, setProcesses] = useState<Process[]>();

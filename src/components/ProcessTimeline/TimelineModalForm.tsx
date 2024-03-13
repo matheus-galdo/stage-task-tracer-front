@@ -2,9 +2,9 @@ import { Button, Form, Input, Modal, Row, Space } from "antd";
 import { AxiosError, AxiosResponse } from "axios";
 import { useContext } from "react";
 import { Process } from "../../pages/Areas/ViewArea";
-import subProcessesService from "../../services/subProcessesService";
 import { SubProcessTimelineContext } from "../../contexts/SubProcessTimelineContext";
 import { SubProcessEditModalContext } from "../../contexts/SubProcessEditModalContext";
+import processesService, { PartialProcess } from "../../services/processesService";
 
 type TimelineModalFormProps = {
   process: Process;
@@ -22,13 +22,13 @@ function TimelineModalForm({ process, onCreateOrUpdate }: TimelineModalFormProps
   const isEditingSubProcess = !!selectedSubProcess;
 
   function handleSubmit(formData: FieldsTypes) {
-    const formRequestBody = { name: formData.subProcessName, processId: process?.id };
+    const formRequestBody: PartialProcess = { name: formData.subProcessName, areaId: process.areaId };
 
     let promise: Promise<AxiosResponse>;
     if (isEditingSubProcess) {
-      promise = subProcessesService.updateProcess(selectedSubProcess.id, formRequestBody);
+      promise = processesService.updateSubProcess(selectedSubProcess.id, formRequestBody);
     } else {
-      promise = subProcessesService.createProcess(formRequestBody);
+      promise = processesService.createSubProcess(process.id, formRequestBody);
     }
 
     promise.then(() => {

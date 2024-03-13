@@ -1,13 +1,13 @@
 import { MenuOutlined } from '@ant-design/icons';
 import { Button, Drawer, Row } from 'antd';
 import { useContext, useState } from 'react';
-import { SubProcess } from '../../pages/ViewProcess/Index.tsx';
 import { SubProcessEditModalContext } from '../../contexts/SubProcessEditModalContext.tsx';
 import TimelineCard from './TimelineCard.tsx';
 import { CustomPlusCircle } from './style.tsx';
+import { ProcessWithSubProcess } from '../../pages/Areas/ViewArea/index.tsx';
 
 export type SubProcessTimeLineProps = {
-  subProcesses: SubProcess[];
+  subProcesses: ProcessWithSubProcess[];
 };
 
 function ProcessTimeLine({ subProcesses }: SubProcessTimeLineProps) {

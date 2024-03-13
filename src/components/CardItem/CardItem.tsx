@@ -1,14 +1,12 @@
-import './style.tsx'
 import { ProcessItem } from './style.tsx'
-import { Menu, Modal } from 'antd';
+import { Modal } from 'antd';
 import { SyntheticEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DeleteFilled, EditFilled, EllipsisOutlined } from '@ant-design/icons';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Area, Process } from '../../pages/Areas/ViewArea/index.tsx';
 import { ProcessForm } from '../../pages/Areas/ViewArea/ProcessForm.tsx';
 import { Action } from '../NavBar/index.tsx';
 import processesService from '../../services/processesService.ts';
+import CardOptionsMenu from '../CardOptionsMenu/Index.tsx';
 
 type CardItemProps = {
     process: Process;
@@ -28,35 +26,15 @@ export default function CardItem({ process, area, getProcesses }: CardItemProps)
         setIsDeleteModalOpen(false);
     };
 
-    const showEditModal = () => {
-        setIsEditModalOpen(true);
-    };
-
-    const showDeleteModal = () => {
-        setIsDeleteModalOpen(true);
-    };
-
-    function fn(action: Action) {
+    function showEditModal(action: Action) {
         action.domEvent.stopPropagation();
-
-        if (action.key === 'edit') {
-            return showEditModal();
-        }
-
-        showDeleteModal();
+        setIsEditModalOpen(true);
     }
 
-    const cardMenuOptions: ItemType[] = [
-        {
-            key: "options", children: [
-                { key: "edit", icon: <EditFilled />, label: "Editar", onClick: fn },
-                { key: "delete", icon: <DeleteFilled />, label: "Excluir", onClick: fn, danger: true },
-            ],
-            onTitleClick: (ev) => {
-                ev.domEvent.stopPropagation();
-            }
-        }
-    ];
+    function showDeleteModal(action: Action) {
+        action.domEvent.stopPropagation();
+        setIsDeleteModalOpen(true);
+    }
 
     function deleteProcess() {
         processesService.deleteProcess(process.id.toString()).then(() => {
@@ -71,7 +49,8 @@ export default function CardItem({ process, area, getProcesses }: CardItemProps)
             navigate(`/processo/${process.id}`)
         }}>
             <p>{process.name}</p>
-            <Menu theme='dark' items={cardMenuOptions} expandIcon={<EllipsisOutlined />} />
+
+            <CardOptionsMenu cardItem={process} onDeleteSelected={showDeleteModal} onEditSelected={showEditModal} />
         </ProcessItem >
 
         <ProcessForm
@@ -81,7 +60,7 @@ export default function CardItem({ process, area, getProcesses }: CardItemProps)
             setIsModalOpen={setIsEditModalOpen}
             area={area}
         />
-        
+
         <Modal
             okButtonProps={{ danger: true, }}
             title="Confirmar ação"

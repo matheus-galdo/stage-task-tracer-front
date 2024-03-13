@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { Area, Process } from ".";
-import processesService from "../../../services/processesService";
+import processesService, { PartialProcess } from "../../../services/processesService";
 import { Button, Form, Input, Modal, Row, Space } from "antd";
 
 type CreateProcessFormProps = {
@@ -19,7 +19,10 @@ export function ProcessForm({ isModalOpen, getProcesses, setIsModalOpen, area, p
   const isEditingProcess = !!process;
 
   function handleSubmit(formData: FieldsTypes) {
-    const formRequestBody = { name: formData.processName, areaId: area?.id };
+    const formRequestBody: PartialProcess = {
+      name: formData.processName,
+      areaId: area?.id
+    };
 
     let promise: Promise<AxiosResponse>;
     if (isEditingProcess) {

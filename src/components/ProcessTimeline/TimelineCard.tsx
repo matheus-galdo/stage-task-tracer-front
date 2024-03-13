@@ -1,16 +1,16 @@
-import { TimelineMarker, TimelinePipe, TimelineCardContainer, TimelinePipeContainer } from './style.tsx'
-import { Menu, Row } from 'antd';
-import { DeleteFilled, EditFilled, EllipsisOutlined } from '@ant-design/icons';
+import { TimelineMarker, TimelinePipe, TimelineCardContainer, TimelinePipeContainer, TimelineCardContent } from './style.tsx'
+import { Badge, Button, Col } from 'antd';
 import { useContext } from 'react';
-import { SubProcess } from '../../pages/ViewProcess/Index.tsx';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Action } from '../NavBar/index.tsx';
 import { SubProcessEditModalContext } from '../../contexts/SubProcessEditModalContext.tsx';
 import { SubProcessDeleteModalContext } from '../../contexts/SubProcessDeleteModalContext.tsx';
 import { SubProcessTimelineContext } from '../../contexts/SubProcessTimelineContext.tsx';
+import CardOptionsMenu from '../CardOptionsMenu/Index.tsx';
+import { ProcessWithSubProcess } from '../../pages/Areas/ViewArea/index.tsx';
+import { Link } from 'react-router-dom';
 
 export type TimelineCardProps = {
-    subProcess: SubProcess;
+    subProcess: ProcessWithSubProcess;
 };
 
 function TimelineCard({ subProcess }: TimelineCardProps) {
@@ -18,31 +18,22 @@ function TimelineCard({ subProcess }: TimelineCardProps) {
     const { showDeleteModal } = useContext(SubProcessDeleteModalContext);
     const { selectedSubProcess, setSelectedSubProcess } = useContext(SubProcessTimelineContext);
 
-    function isSelected(item: SubProcess) {
+    const subProcessHasChildren = subProcess.children.length > 0;
+
+    function isSelected(item: ProcessWithSubProcess) {
         return item.id === selectedSubProcess?.id;
     }
 
-    function getCardMenuOptions(subProcess: SubProcess): ItemType[] {
-        return [{
-            key: "options", children: [
-                { key: "edit", icon: <EditFilled />, label: "Editar", onClick: (action) => fn(action, subProcess) },
-                { key: "delete", icon: <DeleteFilled />, label: "Excluir", onClick: (action) => fn(action, subProcess), danger: true },
-            ],
-            onTitleClick: (ev) => {
-                ev.domEvent.stopPropagation();
-            }
-        }];
+    function openDeleteModal(action: Action, value?: ProcessWithSubProcess) {
+        action.domEvent.stopPropagation();
+        setSelectedSubProcess(value);
+        showDeleteModal();
     }
 
-    function fn(action: Action, subProcess: SubProcess) {
-        setSelectedSubProcess(subProcess);
+    function showEditModal(action: Action, value?: ProcessWithSubProcess) {
         action.domEvent.stopPropagation();
-
-        if (action.key === 'edit') {
-            return openEditModal();
-        }
-
-        showDeleteModal();
+        setSelectedSubProcess(value);
+        return openEditModal();
     }
 
     return <TimelineCardContainer
@@ -51,13 +42,29 @@ function TimelineCard({ subProcess }: TimelineCardProps) {
     >
         <TimelinePipeContainer>
             <TimelinePipe />
-            <TimelineMarker selected={isSelected(subProcess)} />
+
+            {subProcessHasChildren ? <Badge count={subProcess.children.length} color="gold" size='default'>
+                <TimelineMarker selected={isSelected(subProcess)} />
+            </Badge>
+                :
+                <TimelineMarker selected={isSelected(subProcess)} />
+            }
         </TimelinePipeContainer>
 
-        <Row justify='space-between' align='middle'>
-            <div>{subProcess.name}</div>
-            <Menu theme='dark' items={getCardMenuOptions(subProcess)} expandIcon={<EllipsisOutlined />} />
-        </Row>
+        <TimelineCardContent>
+            <Col>
+                <div>{subProcess.name}</div>
+            </Col>
+            <Col>
+                <CardOptionsMenu cardItem={subProcess} onDeleteSelected={openDeleteModal} onEditSelected={showEditModal} />
+
+                {subProcessHasChildren && <Link to={ `/processo/${subProcess.id}`}>
+                    <Button type="primary" size='small'>
+                        Ver sub processos
+                    </Button>
+                </Link>}
+            </Col>
+        </TimelineCardContent>
     </TimelineCardContainer>
 }
 

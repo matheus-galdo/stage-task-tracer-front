@@ -15,7 +15,7 @@ export const PageContent = styled.main`
 export type SubProcessItemProps = {
     selected: boolean;
 }
-export const TimelineCardContainer = styled.aside<SubProcessItemProps>`
+export const TimelineCardContainer = styled.article<SubProcessItemProps>`
     margin: 0px -24px;
     padding: 0px 24px;
     height: 100px;
@@ -31,6 +31,13 @@ export const TimelineCardContainer = styled.aside<SubProcessItemProps>`
     &:hover{
         background-color: ${({ selected }) => selected ? '#33bb92' : 'rgba(255, 255, 255, 0.06)'};
     }
+`;
+
+export const TimelineCardContent = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
 `;
 
 export const TimelinePipeContainer = styled.div`
@@ -49,11 +56,11 @@ export type TimelineMarkerProps = {
     selected: boolean;
 }
 export const TimelineMarker = styled.div<TimelineMarkerProps>`
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     border: 4px solid #2C2C2C;
-    margin-left: -11px;
-    border-radius: 10px;
+    margin-left: -14px;
+    border-radius: 15px;
     background-color: #fff;
 
     ${({ selected }) => selected && 'border-color: #28A781;'}

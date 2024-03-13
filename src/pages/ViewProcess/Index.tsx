@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { PageContainer, PageContent } from './style.tsx'
 import NavBar from '../../components/NavBar/index.tsx'
 import processesService from '../../services/processesService.ts';
-import { Area, Process } from '../Areas/ViewArea/index.tsx';
+import { ProcessWithSubProcess } from '../Areas/ViewArea/index.tsx';
 import SubProcessEditModalContextProvider from '../../contexts/SubProcessEditModalContext.tsx';
 import SubProcessTimelineContextProvider from '../../contexts/SubProcessTimelineContext.tsx';
 import SubProcessDeleteModalContextProvider from '../../contexts/SubProcessDeleteModalContext.tsx';
@@ -15,20 +15,6 @@ import ProcessTimeLine from '../../components/ProcessTimeline/ProcessTimeLine.ts
 import ProcessContent from './ProcessContent.tsx';
 import TimelineModalForm from '../../components/ProcessTimeline/TimelineModalForm.tsx';
 import TimelineModalDelete from '../../components/ProcessTimeline/TimelineModalDelete.tsx';
-
-
-
-export type ProcessWithSubProcess = Process & {
-  subProcesses: SubProcess[];
-  area: Area;
-}
-
-export type SubProcess = {
-  id: number;
-  name: string;
-  processId: number;
-  description?: string;
-}
 
 function ViewProcess() {
   const [process, setProcess] = useState<ProcessWithSubProcess>();
@@ -61,7 +47,7 @@ function ViewProcess() {
 
             {process && <>
               <ProcessContent process={process} />
-              <ProcessTimeLine subProcesses={process.subProcesses} />
+              <ProcessTimeLine subProcesses={process.children} />
               <TimelineModalForm process={process} onCreateOrUpdate={getProcess} />
               <TimelineModalDelete onDelete={getProcess} />
             </>}
@@ -72,7 +58,5 @@ function ViewProcess() {
     </PageContent >
   </PageContainer>
 }
-
-
 
 export default ViewProcess;
